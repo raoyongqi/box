@@ -79,13 +79,15 @@ fig = plt.figure(figsize=(12, 6))
 
 # 创建子图
 ax = fig.add_subplot(1, 1, 1, projection=equal_area_crs)
-ax.set_extent([90 ,108.3466, 20.4422, 34.2002], crs=ccrs.PlateCarree())
+ax.set_extent([91 ,109, 25.4422, 34.2002], crs=ccrs.PlateCarree())
 
-# 绘制 GeoJSON 多边形
+# 绘制多边形
 for feature in geojson_data['features']:
-    if feature['geometry']['type'] == 'Polygon':
-        polygon = shape(feature['geometry'])  # 创建 shapely 多边形对象
-        ax.add_geometries([polygon], crs=ccrs.PlateCarree(), facecolor='none', edgecolor='gray', linewidth=2)
+    if feature['geometry']['type'] == 'MultiPolygon':
+        for coords in feature['geometry']['coordinates']:
+            polygon = shape({'type': 'Polygon', 'coordinates': coords})  # 创建 shapely 多边形对象
+            ax.add_geometries([polygon], crs=ccrs.PlateCarree(), facecolor='none', edgecolor='gray', linewidth=2)
+
 import matplotlib.ticker as mticker
 # from cartopy.mpl.gridliner import LongitudeFormatter
 # lon_formatter = LongitudeFormatter(zero_direction_label=True)
@@ -96,8 +98,8 @@ gl = ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False, co
 gl.top_labels = False  # 关闭顶部经度标签
 gl.right_labels = False  # 关闭右侧纬度标签gl.top_labels = False  # 关闭顶部经度标签
 gl.right_labels = False  # 关闭右侧纬度标签
-gl.xlocator = mticker.FixedLocator([100, 110, 120])  # 设置经度刻度
-gl.ylocator = mticker.FixedLocator([40, 45, 50])  # 设置纬度刻度
+gl.xlocator = mticker.FixedLocator([90, 100, 110, 120])  # 设置经度刻度
+gl.ylocator = mticker.FixedLocator([25,30,35,40, 45, 50])  # 设置纬度刻度
 gl.rotate_labels = False  # 不旋转标签
 gl.xlines = False
 gl.ylines = False
@@ -115,7 +117,8 @@ import numpy as np
 create_pie_series_on_map(inner_mongolia_capitals, global_max_pl_value, ax)
 
 # 设置标题
-ax.set_title('neimeng site', fontsize=14)
+tit = 'sichuan'
+ax.set_title(f'{tit} site', fontsize=14)
 
 # 添加图例
 legend_elements = [
@@ -131,7 +134,7 @@ def add_scale_bar(ax, location, length=0.1):
 add_scale_bar(ax, location=(0.05, 0.05), length=0.1)
 
 inset_border = Rectangle(
-    (0.14, 0.42),  # left and bottom position of the inset (matching the inset position)
+    (0.095, 0.42),  # left and bottom position of the inset (matching the inset position)
     0.3,  # width of the inset
     0.5,  # height of the inset
     linewidth=2,
@@ -156,7 +159,7 @@ with open('中华人民共和国.json', 'r', encoding='utf-8') as file:  # 确�
 # 添加中国地图的插图，定义插图的轴和投影
 fig.subplots_adjust(left=0)  # 设置左边距为0
 
-ax_china_inset = fig.add_axes([0.14, 0.42, 0.4, 0.5], projection=equal_area_crs)  # [left, bottom, width, height]
+ax_china_inset = fig.add_axes([0.095, 0.42, 0.4, 0.5], projection=equal_area_crs)  # [left, bottom, width, height]
 ax_china_inset.set_extent([85.0, 126.0, 0, 56.0], crs=ccrs.PlateCarree())
 
 # 绘制中国所有几何形状
@@ -202,5 +205,5 @@ plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
 
 plt.subplots_adjust(wspace=0, hspace=0)
 # 保存图像
-plt.savefig("data/neimeng.png")
+plt.savefig(f"data/{tit}.png")
 plt.show()
