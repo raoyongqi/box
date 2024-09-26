@@ -5,7 +5,7 @@ from shapely.geometry import shape
 from matplotlib.patches import Wedge, Rectangle, Patch
 
 # 从本地读取 GeoJSON 文件
-with open('青海省.json', 'r', encoding='utf-8') as file:
+with open('西藏自治区.json', 'r', encoding='utf-8') as file:
     geojson_data = json.load(file)
 
 # 计算 global_max_pl_value 函数
@@ -67,7 +67,7 @@ file_path = 'site2.js'  # 替换为您的文件路径
 capitals = load_capitals_from_file(file_path)
 
 # 过滤出内蒙古自治区的数据
-inner_mongolia_capitals = [capital for capital in capitals if capital['province'] == '青海省']
+inner_mongolia_capitals = [capital for capital in capitals if capital['province'] == '西藏自治区']
 global_mongolia_capitals = [capital for capital in capitals]
 
 # 计算 global_max_pl_value
@@ -79,7 +79,7 @@ fig = plt.figure(figsize=(12, 6))
 
 # 创建子图
 ax = fig.add_subplot(1, 1, 1, projection=equal_area_crs)
-ax.set_extent([84, 103, 30.4422, 45.3355], crs=ccrs.PlateCarree())
+ax.set_extent([68.4, 99.1, 26.8, 36.9], crs=ccrs.PlateCarree())
 
 # 绘制多边形
 for feature in geojson_data['features']:
@@ -117,7 +117,7 @@ import numpy as np
 create_pie_series_on_map(inner_mongolia_capitals, global_max_pl_value, ax)
 
 # 设置标题
-tit = 'qinghai'
+tit = 'xizang'
 ax.set_title(f'{tit} site', fontsize=14)
 
 # 添加图例
@@ -134,9 +134,9 @@ def add_scale_bar(ax, location, length=0.1):
 add_scale_bar(ax, location=(0.05, 0.05), length=0.1)
 
 inset_border = Rectangle(
-    (0.3, 0.6),  # left and bottom position of the inset (matching the inset position)
-    0.15,  # width of the inset
-    0.3,  # height of the inset
+    (0.095, 0.42),  # left and bottom position of the inset (matching the inset position)
+    0.3,  # width of the inset
+    0.5,  # height of the inset
     linewidth=2,
     edgecolor='black',
     facecolor='none',
@@ -152,14 +152,14 @@ from geo_northarrow import add_north_arrow
 
 add_north_arrow(ax, scale=0.5, xlim_pos=0.925, ylim_pos=0.9, color='#000', text_scaler=2, text_yT=-1.25)
 
-ax.legend(handles=legend_elements, loc='lower right', fontsize=12, title='Legend', bbox_to_anchor=(1, 0.6))
+ax.legend(handles=legend_elements, loc='lower right', fontsize=12, title='Legend', bbox_to_anchor=(0.3, 0.02))
 # 从本地读取中国的 GeoJSON 文件
 with open('中华人民共和国.json', 'r', encoding='utf-8') as file:  # 确保使用正确的中国地图文件名
     china_data = json.load(file)
 # 添加中国地图的插图，定义插图的轴和投影
 fig.subplots_adjust(left=0)  # 设置左边距为0
 
-ax_china_inset = fig.add_axes([0.31, 0.6, 0.15, 0.3], projection=equal_area_crs)  # [left, bottom, width, height]
+ax_china_inset = fig.add_axes([0.095, 0.42, 0.4, 0.5], projection=equal_area_crs)  # [left, bottom, width, height]
 ax_china_inset.set_extent([85.0, 126.0, 0, 56.0], crs=ccrs.PlateCarree())
 
 # 绘制中国所有几何形状
@@ -173,7 +173,7 @@ for feature in china_data['features']:
     geom = shape(feature['geometry'])
     
     # 检查 feature 的属性，判断是否为内蒙古
-    if '青海省' in feature['properties']['name']:  # 假设属性中有 name 或类似的字段
+    if '西藏自治区' in feature['properties']['name']:  # 假设属性中有 name 或类似的字段
         inner_mongolia_geom = geom  # 保存内蒙古的几何数据
     if  feature['properties']['name'] is '':  # 假设属性中有 name 或类似的字段
         ax_china_inset.add_geometries([geom], crs=ccrs.PlateCarree(), facecolor='none', edgecolor='black', linewidth=2)
